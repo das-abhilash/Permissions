@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int CAMERA_PERMISSIONS_REQUEST = 100;
+    private static final int PERMISSIONS_REQUEST = 100;
     private static final int SMS_PERMISSIONS_REQUEST = 101;
     private static final int STORAGE_PERMISSIONS_REQUEST = 102;
     private static final int CONTACT_PERMISSIONS_REQUEST = 103;
@@ -46,22 +46,20 @@ public class MainActivity extends AppCompatActivity {
                         || ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS)
                         != PackageManager.PERMISSION_GRANTED
                         || (ActivityCompat.checkSelfPermission(MainActivity.this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                        && (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED)
+                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED   )
                 || (ActivityCompat.checkSelfPermission(MainActivity.this,
-                        Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
-                        && (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_CONTACTS)
-                        != PackageManager.PERMISSION_GRANTED))) ) {
+                        Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED  )
+
+                         ) {
 
                   {
 
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.SEND_SMS,
-                                            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,
-                                            Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS},
-                                    CAMERA_PERMISSIONS_REQUEST);
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                            Manifest.permission.READ_CONTACTS},
+                                    PERMISSIONS_REQUEST);
                         }
                     }
 
@@ -76,11 +74,16 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
-        if (requestCode == CAMERA_PERMISSIONS_REQUEST) {
+        if (requestCode == PERMISSIONS_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera Request Granted", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CAMERA_REQUEST);
+
             } else {
-                Toast.makeText(this, "Camera Request Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera Request needed", Toast.LENGTH_SHORT).show();
+
+
             }
 
         if (grantResults.length > 0 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
@@ -93,13 +96,15 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Storage Request Denied", Toast.LENGTH_SHORT).show();
         }
-        if (grantResults.length > 0 && grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[3]== PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Contact Request Granted", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Contact Request Denied", Toast.LENGTH_SHORT).show();
         }
-            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, CAMERA_REQUEST);
+
+
+
+
     }
         else  {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
